@@ -209,13 +209,14 @@ func FilterByScheme(links []Link, allow ...Class) []Link {
 	for _, c := range allow {
 		allowed[c] = true
 	}
+	var out []Link
 	for _, l := range links {
 		c := Classify(l.Href)
 		if c == ClassRelative || c == ClassFragment || allowed[c] {
-			accLinks = append(accLinks, l)
+			out = append(out, l)
 		}
 	}
-	return accLinks
+	return out
 }
 
 // UniqueByHref deduplicates links by resolved-or-raw href, keeping the
