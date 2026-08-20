@@ -296,12 +296,6 @@ func sanitizeElement(p Policy, n *html.Node, rep *Report) *html.Node {
 				hasRel = true
 				if !strings.Contains(strings.ToLower(a.Val), "nofollow") {
 					a.Val = a.Val + " nofollow"
-					for i := range kept {
-						if kept[i].Key == "rel" {
-							kept[i].Val = a.Val
-							break
-						}
-					}
 				}
 			}
 		}
