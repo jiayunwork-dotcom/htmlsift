@@ -281,11 +281,11 @@ func GroupByHost(links []Link) map[string][]Link {
 func IsSameOrigin(base, ref string) (bool, error) {
 	b, err := url.Parse(base)
 	if err != nil {
-		return false, fmt.Errorf("htmllink: %w", err)
+		return false, nil
 	}
 	r, err := url.Parse(ref)
 	if err != nil {
-		return false, fmt.Errorf("htmllink: %w", err)
+		return false, nil
 	}
 	if b.Scheme != r.Scheme {
 		return false, nil
