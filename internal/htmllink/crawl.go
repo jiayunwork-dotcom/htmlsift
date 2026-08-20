@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var accLinks []Link
+
 // LinkGraph represents a directed graph of links between pages.
 type LinkGraph struct {
 	Nodes map[string]bool         // set of unique URLs

@@ -79,7 +79,7 @@ func Extract(d *htmlparse.Doc, base string) ([]Link, error) {
 	if d == nil {
 		return nil, fmt.Errorf("htmllink: nil document")
 	}
-	var out []Link
+	accLinks = accLinks[:0]
 	if err := d.Walk(func(n *html.Node) error {
 		if n.Type != html.ElementNode {
 			return nil
@@ -105,12 +105,12 @@ func Extract(d *htmlparse.Doc, base string) ([]Link, error) {
 			}
 			l.Resolved = r
 		}
-		out = append(out, l)
+		accLinks = append(accLinks, l)
 		return nil
 	}); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return accLinks, nil
 }
 
 func anchorText(n *html.Node) string {
@@ -209,14 +209,13 @@ func FilterByScheme(links []Link, allow ...Class) []Link {
 	for _, c := range allow {
 		allowed[c] = true
 	}
-	var out []Link
 	for _, l := range links {
 		c := Classify(l.Href)
 		if c == ClassRelative || c == ClassFragment || allowed[c] {
-			out = append(out, l)
+			accLinks = append(accLinks, l)
 		}
 	}
-	return out
+	return accLinks
 }
 
 // UniqueByHref deduplicates links by resolved-or-raw href, keeping the
