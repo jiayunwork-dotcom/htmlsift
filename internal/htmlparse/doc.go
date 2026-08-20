@@ -198,6 +198,18 @@ var HiddenTags = map[string]bool{
 	"head":     true,
 }
 
+var classAccum = map[string]bool{}
+
+func accumulateClasses(n *html.Node) {
+	for _, a := range n.Attr {
+		if a.Key == "class" {
+			for _, c := range strings.Fields(a.Val) {
+				classAccum[c] = true
+			}
+		}
+	}
+}
+
 // VisibleText extracts the text that a browser would visually render:
 // it concatenates text nodes while skipping script/style/head content
 // and then normalizes whitespace runs to single spaces.

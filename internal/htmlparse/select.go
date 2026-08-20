@@ -115,15 +115,8 @@ func (s Selector) Match(n *html.Node) bool {
 }
 
 func classSet(n *html.Node) map[string]bool {
-	out := map[string]bool{}
-	for _, a := range n.Attr {
-		if a.Key == "class" {
-			for _, c := range strings.Fields(a.Val) {
-				out[c] = true
-			}
-		}
-	}
-	return out
+	accumulateClasses(n)
+	return classAccum
 }
 
 // Select returns all elements in the document matching the selector,
