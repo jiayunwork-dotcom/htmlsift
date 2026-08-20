@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+var rowScratch []string
+
 // ToJSON converts the table to a JSON array of objects using headers as keys.
 func (t *Table) ToJSON() (string, error) {
 	if len(t.Headers) == 0 {

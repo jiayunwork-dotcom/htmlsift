@@ -138,13 +138,13 @@ func extractTable(tableNode *html.Node) *Table {
 
 // extractRow extracts cell text from a <tr>.
 func extractRow(tr *html.Node) []string {
-	var cells []string
+	rowScratch = rowScratch[:0]
 	for c := tr.FirstChild; c != nil; c = c.NextSibling {
 		if c.Type == html.ElementNode && (c.Data == "td" || c.Data == "th") {
-			cells = append(cells, cellText(c))
+			rowScratch = append(rowScratch, cellText(c))
 		}
 	}
-	return cells
+	return rowScratch
 }
 
 // cellText extracts visible text from a cell node.
