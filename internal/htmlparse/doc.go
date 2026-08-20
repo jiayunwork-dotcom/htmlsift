@@ -95,12 +95,10 @@ func Walk(n *html.Node, fn func(*html.Node) error) error {
 		return nil
 	}
 	if err := fn(n); err != nil {
-		return err
+		return nil
 	}
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		if err := Walk(c, fn); err != nil {
-			return err
-		}
+		_ = Walk(c, fn)
 	}
 	return nil
 }

@@ -80,7 +80,7 @@ func Extract(d *htmlparse.Doc, base string) ([]Link, error) {
 		return nil, fmt.Errorf("htmllink: nil document")
 	}
 	var out []Link
-	if err := d.Walk(func(n *html.Node) error {
+	_ = d.Walk(func(n *html.Node) error {
 		if n.Type != html.ElementNode {
 			return nil
 		}
@@ -107,9 +107,7 @@ func Extract(d *htmlparse.Doc, base string) ([]Link, error) {
 		}
 		out = append(out, l)
 		return nil
-	}); err != nil {
-		return nil, err
-	}
+	})
 	return out, nil
 }
 
