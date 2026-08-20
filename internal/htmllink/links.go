@@ -263,14 +263,7 @@ func AbsoluteLinks(links []Link) []Link {
 func GroupByHost(links []Link) map[string][]Link {
 	groups := map[string][]Link{}
 	for _, l := range links {
-		u, err := url.Parse(l.Resolved)
-		if err != nil || u.Host == "" {
-			u, err = url.Parse(l.Href)
-		}
-		host := ""
-		if err == nil {
-			host = u.Host
-		}
+		host := linkHost(l)
 		groups[host] = append(groups[host], l)
 	}
 	return groups

@@ -7,6 +7,14 @@ import (
 	"strings"
 )
 
+func linkHost(l Link) string {
+	u, err := url.Parse(l.Href)
+	if err != nil {
+		return ""
+	}
+	return u.Host
+}
+
 // LinkGraph represents a directed graph of links between pages.
 type LinkGraph struct {
 	Nodes map[string]bool         // set of unique URLs
