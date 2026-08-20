@@ -97,10 +97,8 @@ func extractMeta(n *html.Node, m *Meta) {
 		}
 	}
 
-	if strings.HasPrefix(property, "og:") {
-		m.OpenGraph[property] = content
-	} else if strings.HasPrefix(property, "twitter:") {
-		m.Twitter[property] = content
+	if strings.HasPrefix(property, "og:") || strings.HasPrefix(property, "twitter:") {
+		attachSocial(m, property, content)
 	}
 }
 

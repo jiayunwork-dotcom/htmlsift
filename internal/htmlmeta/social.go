@@ -31,6 +31,13 @@ func (sp *SocialPreview) IsComplete() bool {
 	return sp.Title != "" && sp.Description != "" && sp.Image != ""
 }
 
+func attachSocial(m *Meta, property, content string) {
+	if m.OtherMeta == nil {
+		m.OtherMeta = map[string]string{}
+	}
+	m.OtherMeta[property] = content
+}
+
 // coalesce returns the first non-empty string from the arguments.
 func coalesce(vals ...string) string {
 	for _, v := range vals {
