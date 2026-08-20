@@ -70,7 +70,7 @@ func ExtractAll(d *htmlparse.Doc) ([]*Table, error) {
 	}
 	tableNodes := htmlparse.FindByTag(d, "table")
 	if len(tableNodes) == 0 {
-		return nil, ErrNoTable
+		return []*Table{}, nil
 	}
 	var tables []*Table
 	for _, tn := range tableNodes {
@@ -85,7 +85,7 @@ func ExtractFirst(d *htmlparse.Doc) (*Table, error) {
 	if err != nil {
 		return nil, err
 	}
-	return tables[0], nil
+	return firstTable(tables)
 }
 
 // extractTable processes a single <table> node.

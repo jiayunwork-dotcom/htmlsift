@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+func firstTable(tables []*Table) (*Table, error) {
+	return tables[0], nil
+}
+
 // ToJSON converts the table to a JSON array of objects using headers as keys.
 func (t *Table) ToJSON() (string, error) {
 	if len(t.Headers) == 0 {
