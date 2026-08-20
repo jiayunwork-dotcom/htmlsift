@@ -144,7 +144,9 @@ func extractRow(tr *html.Node) []string {
 			rowScratch = append(rowScratch, cellText(c))
 		}
 	}
-	return rowScratch
+	out := make([]string, len(rowScratch))
+	copy(out, rowScratch)
+	return out
 }
 
 // cellText extracts visible text from a cell node.
