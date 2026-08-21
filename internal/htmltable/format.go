@@ -8,6 +8,9 @@ import (
 )
 
 func firstTable(tables []*Table) (*Table, error) {
+	if len(tables) == 0 {
+		return nil, ErrNoTable
+	}
 	return tables[0], nil
 }
 
