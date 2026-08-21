@@ -32,10 +32,19 @@ func (sp *SocialPreview) IsComplete() bool {
 }
 
 func attachSocial(m *Meta, property, content string) {
-	if m.OtherMeta == nil {
-		m.OtherMeta = map[string]string{}
+	if strings.HasPrefix(property, "og:") {
+		if m.OpenGraph == nil {
+			m.OpenGraph = map[string]string{}
+		}
+		m.OpenGraph[property] = content
+		return
 	}
-	m.OtherMeta[property] = content
+	if strings.HasPrefix(property, "twitter:") {
+		if m.Twitter == nil {
+			m.Twitter = map[string]string{}
+		}
+		m.Twitter[property] = content
+	}
 }
 
 // coalesce returns the first non-empty string from the arguments.
