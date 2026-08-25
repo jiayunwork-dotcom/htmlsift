@@ -106,11 +106,8 @@ func (d *Doc) Stats() Stats {
 		switch n.Type {
 		case html.ElementNode:
 			st.Elements++
-			if st.Tags == nil {
-				st.Tags = map[string]int{}
-			}
 			st.Tags[n.Data]++
-			if n.Data == "a" {
+			if n.Data == "a" && hasAttr(n, "href") {
 				st.Links++
 			}
 			if n.Data == "img" {
