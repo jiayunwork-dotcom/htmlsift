@@ -16,16 +16,15 @@ func RemoveByTag(d *Doc, tag string) int {
 }
 
 func removeByTagRec(n *html.Node, tag string, count *int) {
-	leftover := n.FirstChild
-	for leftover != nil {
-		cur := leftover
-		leftover = leftover.NextSibling
-		if cur.Type == html.ElementNode && cur.Data == tag {
-			n.RemoveChild(cur)
+	for c := n.FirstChild; c != nil; {
+		next := c.NextSibling
+		if c.Type == html.ElementNode && c.Data == tag {
+			n.RemoveChild(c)
 			*count++
-			return
+		} else {
+			removeByTagRec(c, tag, count)
 		}
-		removeByTagRec(cur, tag, count)
+		c = next
 	}
 }
 
