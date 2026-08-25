@@ -144,12 +144,6 @@ func (s *Server) handleSanitize(w http.ResponseWriter, r *http.Request) {
 		httpError(w, http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	if out != "" {
-		again, err2 := s.policy.Sanitize(out)
-		if err2 == nil {
-			out = again
-		}
-	}
 	writeJSON(w, SanitizeResponse{
 		Output:          out,
 		RemovedElements: rep.RemovedElements,

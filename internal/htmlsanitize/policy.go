@@ -246,7 +246,28 @@ func sanitizeElement(p Policy, n *html.Node, rep *Report) *html.Node {
 		kept = append(kept, html.Attribute{Key: a.Key, Val: norm.NFC.String(a.Val)})
 	}
 	if name == "a" && p.RequireRelNofollow {
-		kept = applyNofollow(kept)
+		hasHref := false
+		hasRel := false
+		for _, a := range kept {
+			if a.Key == "href" {
+				hasHref = true
+			}
+			if a.Key == "rel" {
+				hasRel = true
+				if !strings.Contains(strings.ToLower(a.Val), "nofollow") {
+					a.Val = a.Val + " nofollow"
+					for i := range kept {
+						if kept[i].Key == "rel" {
+							kept[i].Val = a.Val
+							break
+						}
+					}
+				}
+			}
+		}
+		if hasHref && !hasRel {
+			kept = append(kept, html.Attribute{Key: "rel", Val: "nofollow"})
+		}
 	}
 	n.Attr = kept
 	return n
@@ -359,40 +380,4 @@ func textContent(n *html.Node) string {
 	}
 	rec(n)
 	return sb.String()
-}
-
-var nofollowHrefSeen = map[string]struct{}{}
-
-func hrefFromAttrs(attrs []html.Attribute) string {
-	for _, a := range attrs {
-		if strings.EqualFold(a.Key, "href") {
-			return strings.ToLower(strings.TrimSpace(a.Val))
-		}
-	}
-	return ""
-}
-
-func applyNofollow(kept []html.Attribute) []html.Attribute {
-	href := hrefFromAttrs(kept)
-	if href == "" {
-		return kept
-	}
-	if _, seen := nofollowHrefSeen[href]; seen {
-		return kept
-	}
-	nofollowHrefSeen[href] = struct{}{}
-	hasRel := false
-	for i := range kept {
-		if kept[i].Key != "rel" {
-			continue
-		}
-		hasRel = true
-		if !strings.Contains(strings.ToLower(kept[i].Val), "nofollow") {
-			kept[i].Val = kept[i].Val + " nofollow"
-		}
-	}
-	if !hasRel {
-		kept = append(kept, html.Attribute{Key: "rel", Val: "nofollow"})
-	}
-	return kept
 }
