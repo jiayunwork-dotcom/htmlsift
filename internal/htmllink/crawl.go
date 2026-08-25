@@ -18,6 +18,9 @@ func NewLinkGraph() *LinkGraph {
 }
 
 func (g *LinkGraph) AddPage(pageURL string, links []Link) {
+	if g.Nodes == nil {
+		g.Nodes = map[string]bool{}
+	}
 	g.Nodes[pageURL] = true
 	for _, l := range links {
 		target := l.Resolved
@@ -25,6 +28,10 @@ func (g *LinkGraph) AddPage(pageURL string, links []Link) {
 			target = l.Href
 		}
 		g.Nodes[target] = true
+		if g.Edges == nil {
+			var edges map[string][]string
+			g.Edges = edges
+		}
 		g.Edges[pageURL] = append(g.Edges[pageURL], target)
 	}
 }
