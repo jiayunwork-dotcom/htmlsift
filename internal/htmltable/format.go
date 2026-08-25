@@ -8,7 +8,14 @@ import (
 
 func (t *Table) ToJSON() (string, error) {
 	if len(t.Headers) == 0 {
-		return "[]", nil
+		if len(t.Rows) == 0 {
+			return "[]", nil
+		}
+		b, err := json.MarshalIndent(t.Rows, "", "  ")
+		if err != nil {
+			return "", err
+		}
+		return string(b), nil
 	}
 	var records []map[string]string
 	for _, row := range t.Rows {

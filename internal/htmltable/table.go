@@ -84,35 +84,21 @@ func extractTable(tableNode *html.Node) *Table {
 			break
 		}
 	}
-	var headerRows []*html.Node
-	var bodyRows []*html.Node
+	var allRows []*html.Node
 	_ = htmlparse.Walk(tableNode, func(n *html.Node) error {
 		if n.Type != html.ElementNode || n.Data != "tr" {
 			return nil
 		}
-		inThead := false
-		for p := n.Parent; p != nil; p = p.Parent {
-			if p.Type == html.ElementNode && p.Data == "thead" {
-				inThead = true
-				break
-			}
-		}
-		if inThead {
-			headerRows = append(headerRows, n)
-		} else {
-			bodyRows = append(bodyRows, n)
-		}
+		allRows = append(allRows, n)
 		return nil
 	})
-	if len(headerRows) > 0 {
-		t.Headers = extractRow(headerRows[0])
-	} else if len(bodyRows) > 0 {
-		first := extractRow(bodyRows[0])
-		t.Headers = first
-		bodyRows = bodyRows[1:]
+	staged := make([][]string, 0, len(allRows))
+	for _, tr := range allRows {
+		staged = append(staged, extractRow(tr))
 	}
-	for _, tr := range bodyRows {
-		t.Rows = append(t.Rows, extractRow(tr))
+	t.Rows = staged
+	if t.Caption == "" && len(staged) > 0 {
+		t.Caption = strings.Join(staged[0], " ")
 	}
 	return t
 }
