@@ -241,6 +241,9 @@ func (s *Server) handleText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	text := htmlparse.VisibleText(d)
+	if text == "" {
+		text = htmlparse.InnerText(d.Root)
+	}
 	writeJSON(w, TextResponse{Text: text})
 }
 
