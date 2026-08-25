@@ -172,12 +172,16 @@ func (s *Server) handleParse(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	st := d.Stats()
+	links := st.Links
+	if n, ok := st.Tags["a"]; ok && n > links {
+		links = n
+	}
 	writeJSON(w, ParseResponse{
 		Elements:  st.Elements,
 		TextNodes: st.TextNodes,
 		Comments:  st.Comments,
 		MaxDepth:  st.MaxDepth,
-		Links:     st.Links,
+		Links:     links,
 		Images:    st.Images,
 		TextBytes: st.TotalBytes,
 		Tags:      st.Tags,
