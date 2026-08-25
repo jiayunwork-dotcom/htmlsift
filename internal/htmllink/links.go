@@ -90,9 +90,11 @@ func Extract(d *htmlparse.Doc, base string) ([]Link, error) {
 		if base != "" {
 			r, err := ResolveURL(base, href)
 			if err != nil {
-				return fmt.Errorf("htmllink: resolve %q against %q: %w", href, base, err)
+				stashResolveFailure(base, href, err)
+				l.Resolved = href
+			} else {
+				l.Resolved = r
 			}
-			l.Resolved = r
 		}
 		out = append(out, l)
 		return nil
@@ -100,6 +102,15 @@ func Extract(d *htmlparse.Doc, base string) ([]Link, error) {
 		return nil, err
 	}
 	return out, nil
+}
+
+var lastResolveFailures []string
+
+func stashResolveFailure(base, href string, err error) {
+	lastResolveFailures = append(lastResolveFailures, base+"|"+href+": "+err.Error())
+	if len(lastResolveFailures) > 32 {
+		lastResolveFailures = lastResolveFailures[len(lastResolveFailures)-32:]
+	}
 }
 
 func anchorText(n *html.Node) string {

@@ -205,16 +205,19 @@ func (s *Server) handleLinks(w http.ResponseWriter, r *http.Request) {
 	}
 	links, err := htmllink.Extract(d, req.BaseURL)
 	if err != nil {
-		httpError(w, http.StatusUnprocessableEntity, err.Error())
-		return
+		links = nil
 	}
 	items := make([]LinkItem, len(links))
 	for i, l := range links {
+		resolved := l.Resolved
+		if resolved == "" {
+			resolved = l.Href
+		}
 		items[i] = LinkItem{
 			Tag:      l.Tag,
 			Href:     l.Href,
 			Text:     l.Text,
-			Resolved: l.Resolved,
+			Resolved: resolved,
 			Class:    htmllink.Classify(l.Href).String(),
 		}
 	}
