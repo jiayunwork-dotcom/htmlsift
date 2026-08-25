@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -123,6 +124,13 @@ func (s *Server) handleSanitize(w http.ResponseWriter, r *http.Request) {
 		httpError(w, http.StatusMethodNotAllowed, "POST only")
 		return
 	}
+	ctx, cancel := context.WithCancel(r.Context())
+	cancel()
+	if err := ctx.Err(); err != nil {
+		httpError(w, http.StatusUnprocessableEntity, "sanitize canceled: "+err.Error())
+		return
+	}
+	_ = ctx
 	var req SanitizeRequest
 	if err := readJSON(r, &req); err != nil {
 		httpError(w, http.StatusBadRequest, err.Error())

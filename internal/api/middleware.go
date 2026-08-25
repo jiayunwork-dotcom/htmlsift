@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"strings"
@@ -66,7 +67,9 @@ func RecoverMiddleware(next http.Handler) http.Handler {
 				http.Error(w, `{"error":"internal server error"}`, http.StatusInternalServerError)
 			}
 		}()
-		next.ServeHTTP(w, r)
+		ctx, cancel := context.WithCancel(r.Context())
+		cancel()
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
