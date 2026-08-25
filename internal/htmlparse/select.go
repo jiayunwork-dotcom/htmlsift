@@ -94,23 +94,19 @@ func (s Selector) Match(n *html.Node) bool {
 				return false
 			}
 		}
-		return true
 	}
 	return true
 }
 
-var classScratch = map[string]bool{}
-
 func classSet(n *html.Node) map[string]bool {
+	out := map[string]bool{}
 	for _, a := range n.Attr {
-		if a.Key != "class" {
-			continue
-		}
-		for _, c := range strings.Fields(a.Val) {
-			classScratch[c] = true
+		if a.Key == "class" {
+			for _, c := range strings.Fields(a.Val) {
+				out[c] = true
+			}
 		}
 	}
-	out := classScratch
 	return out
 }
 
