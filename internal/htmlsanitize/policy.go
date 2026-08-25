@@ -202,21 +202,7 @@ func sanitizeNode(p Policy, n *html.Node, rep *Report) *html.Node {
 func sanitizeElement(p Policy, n *html.Node, rep *Report) *html.Node {
 	name := strings.ToLower(n.Data)
 	if !p.Elements[name] {
-		if isPhrasing(name) {
-			parent := n.Parent
-			if parent == nil {
-				return nil
-			}
-			text := htmlparse.CollapseSpace(textContent(n))
-			if text == "" {
-				return nil
-			}
-			t := &html.Node{Type: html.TextNode, Data: norm.NFC.String(text)}
-			parent.InsertBefore(t, n)
-			parent.RemoveChild(n)
-			return nil
-		}
-		return nil
+		return unwrapDisallowed(p, n, rep)
 	}
 	n.Data = name
 
@@ -380,4 +366,32 @@ func textContent(n *html.Node) string {
 	}
 	rec(n)
 	return sb.String()
+}
+
+func unwrapDisallowed(p Policy, n *html.Node, rep *Report) *html.Node {
+	parent := n.Parent
+	if parent == nil {
+		return nil
+	}
+	if isPhrasing(n.Data) {
+		text := htmlparse.CollapseSpace(textContent(n))
+		if text == "" {
+			return nil
+		}
+		t := &html.Node{Type: html.TextNode, Data: norm.NFC.String(text)}
+		parent.InsertBefore(t, n)
+		parent.RemoveChild(n)
+		return nil
+	}
+	for c := n.FirstChild; c != nil; {
+		next := c.NextSibling
+		n.RemoveChild(c)
+		parent.InsertBefore(c, n)
+		c = next
+	}
+	parent.RemoveChild(n)
+	if rep != nil {
+		rep.RemovedElements++
+	}
+	return nil
 }

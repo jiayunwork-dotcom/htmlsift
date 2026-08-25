@@ -34,12 +34,16 @@ func PermissivePolicy() Policy {
 }
 
 func TextOnlyPolicy() Policy {
-	return Policy{
+	p := Policy{
 		Elements:      map[string]bool{},
 		Attrs:         map[string]map[string]bool{},
 		Schemes:       map[string]bool{},
 		StripComments: true,
 	}
+	p.Elements["html"] = false
+	p.Elements["body"] = false
+	p.Elements["head"] = false
+	return p
 }
 
 type PolicyBuilder struct {
