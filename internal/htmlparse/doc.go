@@ -178,14 +178,13 @@ var HiddenTags = map[string]bool{
 
 func VisibleText(d *Doc) string {
 	var sb strings.Builder
-	hiddenDepth := 0
 	var collect func(n *html.Node)
 	collect = func(n *html.Node) {
 		for c := n.FirstChild; c != nil; c = c.NextSibling {
 			if c.Type == html.ElementNode && HiddenTags[c.Data] {
-				hiddenDepth++
+				continue
 			}
-			if hiddenDepth == 0 && c.Type == html.TextNode {
+			if c.Type == html.TextNode {
 				sb.WriteString(c.Data)
 				sb.WriteByte(' ')
 			}
